@@ -221,11 +221,9 @@
         function update() {
             if (isGameOver) return;
 
-            // ზომების მუდმივი კონტროლი
             containerWidth = container.clientWidth;
             containerHeight = container.clientHeight;
 
-            // კურდღლის მოძრაობა
             let dx = targetX - playerX;
             let dy = targetY - playerY;
             let distance = Math.sqrt(dx * dx + dy * dy);
@@ -246,7 +244,6 @@
             player.style.left = playerX + 'px';
             player.style.top = playerY + 'px';
 
-            // ვაშლის შეჭმა
             for (let i = items.length - 1; i >= 0; i--) {
                 let item = items[i];
                 let dist = Math.sqrt(Math.pow(item.x - playerX, 2) + Math.pow(item.y - playerY, 2));
@@ -260,7 +257,6 @@
                 }
             }
 
-            // ბომბზე აფეთქება
             for (let i = bombs.length - 1; i >= 0; i--) {
                 let bomb = bombs[i];
                 let dist = Math.sqrt(Math.pow(bomb.x - playerX, 2) + Math.pow(bomb.y - playerY, 2));
@@ -270,15 +266,14 @@
                 }
             }
 
-            // უსაფრთხო სპავნერი ნაცვლად setInterval-ისა
             spawnItemTimer++;
-            if (spawnItemTimer > 300) { // დაახლოებით 5 წამი
+            if (spawnItemTimer > 300) {
                 if (items.length < 3) createItem();
                 spawnItemTimer = 0;
             }
 
             spawnBombTimer++;
-            if (spawnBombTimer > 450) { // დაახლოებით 7 წამი
+            if (spawnBombTimer > 450) {
                 if (bombs.length < 4) createBomb();
                 spawnBombTimer = 0;
             }
@@ -329,7 +324,6 @@
             requestAnimationFrame(update);
         }
 
-        // პირველი სტარტი
         setTimeout(() => {
             containerWidth = container.clientWidth;
             containerHeight = container.clientHeight;
