@@ -62,10 +62,11 @@
             box-shadow: 2px 2px rgba(0, 0, 0, 0.2);
             z-index: 2;
         }
+        /* ვაშლი და ბომბი გაცერებული და გადიდებული */
         .item {
             position: absolute;
-            width: 30px;
-            height: 30px;
+            width: 38px;
+            height: 38px;
             background-image: url('apple.png');
             background-size: contain;
             background-repeat: no-repeat;
@@ -74,8 +75,8 @@
         }
         .bomb {
             position: absolute;
-            width: 32px;
-            height: 32px;
+            width: 40px;
+            height: 40px;
             background-image: url('bomb.png');
             background-size: contain;
             background-repeat: no-repeat;
@@ -161,6 +162,14 @@
         const speedElement = document.getElementById('speed');
         const gameOverScreen = document.getElementById('game-over-screen');
 
+        // ონლაინ აუდიო ფაილები
+        const eatSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2290/2290-84.wav');
+        const explodeSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav');
+        
+        // ხმის სიძლიერის დარეგულირება
+        eatSound.volume = 0.5;
+        explodeSound.volume = 0.6;
+
         let containerWidth = 400;
         let containerHeight = 400;
         const playerWidth = 32;
@@ -200,8 +209,8 @@
         function createItem() {
             const item = document.createElement('div');
             item.classList.add('item');
-            let x = Math.random() * (containerWidth - 35);
-            let y = Math.random() * (containerHeight - 35);
+            let x = Math.random() * (containerWidth - 42);
+            let y = Math.random() * (containerHeight - 42);
             item.style.left = x + 'px';
             item.style.top = y + 'px';
             container.appendChild(item);
@@ -211,8 +220,8 @@
         function createBomb() {
             const bomb = document.createElement('div');
             bomb.classList.add('bomb');
-            let x = Math.random() * (containerWidth - 35);
-            let y = Math.random() * (containerHeight - 35);
+            let x = Math.random() * (containerWidth - 45);
+            let y = Math.random() * (containerHeight - 45);
             bomb.style.left = x + 'px';
             bomb.style.top = y + 'px';
             container.appendChild(bomb);
@@ -245,13 +254,18 @@
             player.style.left = playerX + 'px';
             player.style.top = playerY + 'px';
 
-            // შეჯახება ვაშლთან
+            // შეჯახება ვაშლთან (ახალი ზომების მიხედვით)
             for (let i = items.length - 1; i >= 0; i--) {
                 let item = items[i];
-                let dist = Math.sqrt(Math.pow((item.x + 15) - (playerX + 16), 2) + Math.pow((item.y + 15) - (playerY + 16), 2));
-                if (dist < 26) {
+                let dist = Math.sqrt(Math.pow((item.x + 19) - (playerX + 16), 2) + Math.pow((item.y + 19) - (playerY + 16), 2));
+                if (dist < 32) {
                     item.element.remove();
                     items.splice(i, 1);
+                    
+                    // ჭამის ხმის დაკვრა
+                    eatSound.currentTime = 0;
+                    eatSound.play().catch(e => console.log("აუდიოს ჩართვის შეცდომა:", e));
+
                     score += 10;
                     scoreElement.innerText = score;
                     updateLevel();
@@ -259,11 +273,14 @@
                 }
             }
 
-            // შეჯახება ბომბთან
+            // შეჯახება ბომბთან (ახალი ზომების მიხედვით)
             for (let i = bombs.length - 1; i >= 0; i--) {
                 let bomb = bombs[i];
-                let dist = Math.sqrt(Math.pow((bomb.x + 16) - (playerX + 16), 2) + Math.pow((bomb.y + 16) - (playerY + 16), 2));
-                if (dist < 24) {
+                let dist = Math.sqrt(Math.pow((bomb.x + 20) - (playerX + 16), 2) + Math.pow((bomb.y + 20) - (playerY + 16), 2));
+                if (dist < 30) {
+                    // აფეთქების ხმის დაკვრა
+                    explodeSound.play().catch(e => console.log("აუდიოს ჩართვის შეცდომა:", e));
+                    
                     endGame();
                     return;
                 }
