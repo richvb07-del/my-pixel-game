@@ -60,27 +60,29 @@
             border: 2px solid #fff;
             border-radius: 4px;
             box-shadow: 2px 2px rgba(0, 0, 0, 0.2);
-            z-index: 2;
+            z-index: 5;
         }
-        /* ვაშლი და ბომბი გაცერებული და გადიდებული */
+        /* კიდევ უფრო დიდი ზომები (50px) ტელეფონისთვის */
         .item {
             position: absolute;
-            width: 38px;
-            height: 38px;
+            width: 50px;
+            height: 50px;
             background-image: url('apple.png');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
+            z-index: 2;
             animation: bounce 0.5s infinite alternate;
         }
         .bomb {
             position: absolute;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             background-image: url('bomb.png');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
+            z-index: 2;
             animation: pulse 0.6s infinite alternate;
         }
 
@@ -162,13 +164,12 @@
         const speedElement = document.getElementById('speed');
         const gameOverScreen = document.getElementById('game-over-screen');
 
-        // ონლაინ აუდიო ფაილები
-        const eatSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2290/2290-84.wav');
-        const explodeSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav');
+        // ახალი, უფრო სტაბილური ხმები ონლაინ ბიბლიოთეკიდან
+        const eatSound = new Audio('https://actions.google.com/sounds/v1/cartoon/cartoon_bite.ogg');
+        const explodeSound = new Audio('https://actions.google.com/sounds/v1/cartoon/pop.ogg');
         
-        // ხმის სიძლიერის დარეგულირება
-        eatSound.volume = 0.5;
-        explodeSound.volume = 0.6;
+        eatSound.volume = 0.7;
+        explodeSound.volume = 0.8;
 
         let containerWidth = 400;
         let containerHeight = 400;
@@ -192,169 +193,8 @@
         let spawnItemTimer = 0;
         let spawnBombTimer = 0;
 
-        function setTarget(clientX, clientY) {
-            if (isGameOver) return;
-            const rect = container.getBoundingClientRect();
-            targetX = clientX - rect.left - (playerWidth / 2);
-            targetY = clientY - rect.top - (playerHeight / 2);
-        }
-
-        container.addEventListener('mousedown', (e) => setTarget(e.clientX, e.clientY));
-        container.addEventListener('touchstart', (e) => {
-            if(e.touches.length > 0) {
-                setTarget(e.touches[0].clientX, e.touches[0].clientY);
-            }
-        });
-
-        function createItem() {
-            const item = document.createElement('div');
-            item.classList.add('item');
-            let x = Math.random() * (containerWidth - 42);
-            let y = Math.random() * (containerHeight - 42);
-            item.style.left = x + 'px';
-            item.style.top = y + 'px';
-            container.appendChild(item);
-            items.push({ element: item, x: x, y: y });
-        }
-
-        function createBomb() {
-            const bomb = document.createElement('div');
-            bomb.classList.add('bomb');
-            let x = Math.random() * (containerWidth - 45);
-            let y = Math.random() * (containerHeight - 45);
-            bomb.style.left = x + 'px';
-            bomb.style.top = y + 'px';
-            container.appendChild(bomb);
-            bombs.push({ element: bomb, x: x, y: y });
-        }
-
-        function update() {
-            if (isGameOver) return;
-
-            containerWidth = container.clientWidth;
-            containerHeight = container.clientHeight;
-
-            let dx = targetX - playerX;
-            let dy = targetY - playerY;
-            let distance = Math.sqrt(dx * dx + dy * dy);
-
-            if (distance > 5) {
-                playerX += (dx / distance) * speed;
-                playerY += (dy / distance) * speed;
-            } else {
-                playerX = targetX;
-                playerY = targetY;
-            }
-
-            if (playerX < 0) playerX = 0;
-            if (playerY < 0) playerY = 0;
-            if (playerX > containerWidth - playerWidth) playerX = containerWidth - playerWidth;
-            if (playerY > containerHeight - playerHeight) playerY = containerHeight - playerHeight;
-
-            player.style.left = playerX + 'px';
-            player.style.top = playerY + 'px';
-
-            // შეჯახება ვაშლთან (ახალი ზომების მიხედვით)
-            for (let i = items.length - 1; i >= 0; i--) {
-                let item = items[i];
-                let dist = Math.sqrt(Math.pow((item.x + 19) - (playerX + 16), 2) + Math.pow((item.y + 19) - (playerY + 16), 2));
-                if (dist < 32) {
-                    item.element.remove();
-                    items.splice(i, 1);
-                    
-                    // ჭამის ხმის დაკვრა
-                    eatSound.currentTime = 0;
-                    eatSound.play().catch(e => console.log("აუდიოს ჩართვის შეცდომა:", e));
-
-                    score += 10;
-                    scoreElement.innerText = score;
-                    updateLevel();
-                    createItem();
-                }
-            }
-
-            // შეჯახება ბომბთან (ახალი ზომების მიხედვით)
-            for (let i = bombs.length - 1; i >= 0; i--) {
-                let bomb = bombs[i];
-                let dist = Math.sqrt(Math.pow((bomb.x + 20) - (playerX + 16), 2) + Math.pow((bomb.y + 20) - (playerY + 16), 2));
-                if (dist < 30) {
-                    // აფეთქების ხმის დაკვრა
-                    explodeSound.play().catch(e => console.log("აუდიოს ჩართვის შეცდომა:", e));
-                    
-                    endGame();
-                    return;
-                }
-            }
-
-            spawnItemTimer++;
-            if (spawnItemTimer > 300) {
-                if (items.length < 3) createItem();
-                spawnItemTimer = 0;
-            }
-
-            spawnBombTimer++;
-            if (spawnBombTimer > 450) {
-                if (bombs.length < 4) createBomb();
-                spawnBombTimer = 0;
-            }
-
-            requestAnimationFrame(update);
-        }
-
-        function updateLevel() {
-            let nextLevel = Math.floor(score / 100) + 1;
-            if (nextLevel > currentLevel) {
-                currentLevel = nextLevel;
-                speed = baseSpeed + (currentLevel - 1) * 1.2;
-                let spdText = "ნელი";
-                if (currentLevel > 2) spdText = "საშუალო";
-                if (currentLevel > 4) spdText = "სწრაფი";
-                speedElement.innerText = spdText;
-            }
-        }
-
-        function endGame() {
-            isGameOver = true;
-            gameOverScreen.style.display = 'flex';
-        }
-
-        function resetGame() {
-            score = 0;
-            currentLevel = 1;
-            speed = baseSpeed;
-            isGameOver = false;
-            scoreElement.innerText = score;
-            speedElement.innerText = "ნელი";
-            gameOverScreen.style.display = 'none';
-            
-            items.forEach(i => i.element.remove());
-            items = [];
-            bombs.forEach(b => b.element.remove());
-            bombs = [];
-
-            containerWidth = container.clientWidth;
-            containerHeight = container.clientHeight;
-            playerX = (containerWidth / 2) - (playerWidth / 2);
-            playerY = (containerHeight / 2) - (playerHeight / 2);
-            targetX = playerX;
-            targetY = playerY;
-
-            createItem();
-            createBomb();
-            requestAnimationFrame(update);
-        }
-
-        setTimeout(() => {
-            containerWidth = container.clientWidth;
-            containerHeight = container.clientHeight;
-            playerX = (containerWidth / 2) - (playerWidth / 2);
-            playerY = (containerHeight / 2) - (playerHeight / 2);
-            targetX = playerX;
-            targetY = playerY;
-            createItem();
-            createBomb();
-            requestAnimationFrame(update);
-        }, 100);
-    </script>
-</body>
-</html>
+        // ფუნქცია ბრაუზერში ხმის მყისიერად გასააქტიურებლად
+        function unlockAudio() {
+            eatSound.play().then(() => {
+                eatSound.pause();
+                eatSound.
