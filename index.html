@@ -60,35 +60,36 @@
             border: 2px solid #fff;
             border-radius: 4px;
             box-shadow: 2px 2px rgba(0, 0, 0, 0.2);
+            z-index: 2;
         }
         .item {
             position: absolute;
-            width: 24px;
-            height: 24px;
-            background: #ff3333;
-            border: 2px solid #990000;
-            border-radius: 2px;
-            box-shadow: 2px 2px rgba(0, 0, 0, 0.2);
+            width: 30px;
+            height: 30px;
+            background-image: url('apple.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
             animation: bounce 0.5s infinite alternate;
         }
         .bomb {
             position: absolute;
-            width: 20px;
-            height: 20px;
-            background: #333;
-            border: 3px solid #ff0000;
-            border-radius: 50%;
-            box-shadow: 2px 2px rgba(0, 0, 0, 0.3);
+            width: 32px;
+            height: 32px;
+            background-image: url('bomb.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
             animation: pulse 0.6s infinite alternate;
         }
 
         @keyframes bounce {
             from { transform: translateY(0); }
-            to { transform: translateY(-5px); }
+            to { transform: translateY(-4px); }
         }
         @keyframes pulse {
-            from { transform: scale(1); opacity: 1; }
-            to { transform: scale(1.1); opacity: 0.8; }
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
         }
 
         #game-over-screen {
@@ -199,8 +200,8 @@
         function createItem() {
             const item = document.createElement('div');
             item.classList.add('item');
-            let x = Math.random() * (containerWidth - 30);
-            let y = Math.random() * (containerHeight - 30);
+            let x = Math.random() * (containerWidth - 35);
+            let y = Math.random() * (containerHeight - 35);
             item.style.left = x + 'px';
             item.style.top = y + 'px';
             container.appendChild(item);
@@ -210,8 +211,8 @@
         function createBomb() {
             const bomb = document.createElement('div');
             bomb.classList.add('bomb');
-            let x = Math.random() * (containerWidth - 25);
-            let y = Math.random() * (containerHeight - 25);
+            let x = Math.random() * (containerWidth - 35);
+            let y = Math.random() * (containerHeight - 35);
             bomb.style.left = x + 'px';
             bomb.style.top = y + 'px';
             container.appendChild(bomb);
@@ -244,10 +245,11 @@
             player.style.left = playerX + 'px';
             player.style.top = playerY + 'px';
 
+            // შეჯახება ვაშლთან
             for (let i = items.length - 1; i >= 0; i--) {
                 let item = items[i];
-                let dist = Math.sqrt(Math.pow(item.x - playerX, 2) + Math.pow(item.y - playerY, 2));
-                if (dist < 28) {
+                let dist = Math.sqrt(Math.pow((item.x + 15) - (playerX + 16), 2) + Math.pow((item.y + 15) - (playerY + 16), 2));
+                if (dist < 26) {
                     item.element.remove();
                     items.splice(i, 1);
                     score += 10;
@@ -257,9 +259,10 @@
                 }
             }
 
+            // შეჯახება ბომბთან
             for (let i = bombs.length - 1; i >= 0; i--) {
                 let bomb = bombs[i];
-                let dist = Math.sqrt(Math.pow(bomb.x - playerX, 2) + Math.pow(bomb.y - playerY, 2));
+                let dist = Math.sqrt(Math.pow((bomb.x + 16) - (playerX + 16), 2) + Math.pow((bomb.y + 16) - (playerY + 16), 2));
                 if (dist < 24) {
                     endGame();
                     return;
