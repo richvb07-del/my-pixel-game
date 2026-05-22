@@ -52,28 +52,30 @@
             border-radius: 4px;
             overflow: hidden;
         }
+        /* კურდღელი ვარდისფერი კუბის ნაცვლად */
         #player {
             position: absolute;
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(180deg, #ff99cc 0%, #ff66aa 100%);
-            border: 2px solid #fff;
-            border-radius: 4px;
-            box-shadow: 2px 2px rgba(0, 0, 0, 0.2);
+            width: 45px;
+            height: 45px;
+            background-image: url('bunny.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
             z-index: 5;
         }
-        /* კიდევ უფრო დიდი ზომები (55px) */
+        /* სტაფილო დიდი ზომით (55px) */
         .item {
             position: absolute;
             width: 55px;
             height: 55px;
-            background-image: url('apple.png');
+            background-image: url('carrot.png');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
             z-index: 2;
             animation: bounce 0.5s infinite alternate;
         }
+        /* ბომბი დიდი ზომით (55px) */
         .bomb {
             position: absolute;
             width: 55px;
@@ -140,7 +142,7 @@
     <h1>COZY PIXEL COLLECTOR</h1>
 
     <div class="ui-container">
-        <div id="score-board">ვაშლები: <span id="score">0</span></div>
+        <div id="score-board">სტაფილო: <span id="score">0</span></div>
         <div id="level-board">სიჩქარე: <span id="speed">ნელი</span></div>
     </div>
 
@@ -166,8 +168,8 @@
 
         let containerWidth = 400;
         let containerHeight = 400;
-        const playerWidth = 32;
-        const playerHeight = 32;
+        const playerWidth = 45;
+        const playerHeight = 45;
 
         let playerX = 150;
         let playerY = 150;
@@ -203,7 +205,6 @@
         function createItem() {
             const item = document.createElement('div');
             item.classList.add('item');
-            // გამოკლებულია 60 ზომების გამო
             let x = Math.random() * (containerWidth - 60);
             let y = Math.random() * (containerHeight - 60);
             item.style.left = x + 'px';
@@ -249,12 +250,11 @@
             player.style.left = playerX + 'px';
             player.style.top = playerY + 'px';
 
-            // შეჯახება დიდ ვაშლთან
+            // შეჯახება სტაფილოსთან
             for (let i = items.length - 1; i >= 0; i--) {
                 let item = items[i];
-                // ცენტრების გამოთვლა ახალი ზომით (55px / 2 = 27.5)
-                let dist = Math.sqrt(Math.pow((item.x + 27.5) - (playerX + 16), 2) + Math.pow((item.y + 27.5) - (playerY + 16), 2));
-                if (dist < 40) {
+                let dist = Math.sqrt(Math.pow((item.x + 27.5) - (playerX + 22.5), 2) + Math.pow((item.y + 27.5) - (playerY + 22.5), 2));
+                if (dist < 42) {
                     item.element.remove();
                     items.splice(i, 1);
                     score += 10;
@@ -264,11 +264,11 @@
                 }
             }
 
-            // შეჯახება დიდ ბომბთან
+            // შეჯახება ბომბთან
             for (let i = bombs.length - 1; i >= 0; i--) {
                 let bomb = bombs[i];
-                let dist = Math.sqrt(Math.pow((bomb.x + 27.5) - (playerX + 16), 2) + Math.pow((bomb.y + 27.5) - (playerY + 16), 2));
-                if (dist < 38) {
+                let dist = Math.sqrt(Math.pow((bomb.x + 27.5) - (playerX + 22.5), 2) + Math.pow((bomb.y + 27.5) - (playerY + 22.5), 2));
+                if (dist < 40) {
                     endGame();
                     return;
                 }
