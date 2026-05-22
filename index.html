@@ -9,7 +9,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            image-rendering: pixelated;
+            image-rendering: auto;
             touch-action: none;
         }
         body {
@@ -52,35 +52,35 @@
             border-radius: 4px;
             overflow: hidden;
         }
-        /* კურდღლის დიდი ზომა */
+        /* კურდღელი - თუ პატარა png-ით ვერ იპოვა, დიდ PNG-ს წაიღებს */
         #player {
             position: absolute;
-            width: 50px;
-            height: 50px;
-            background-image: url('bunny.png?v=2');
+            width: 55px;
+            height: 55px;
+            background-image: url('bunny.png'), url('bunny.PNG'), url('bunny.jpg');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
             z-index: 5;
         }
-        /* სტაფილოს დიდი ზომა */
+        /* სტაფილო */
         .item {
             position: absolute;
             width: 55px;
             height: 55px;
-            background-image: url('carrot.png?v=2');
+            background-image: url('carrot.png'), url('carrot.PNG'), url('carrot.jpg');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
             z-index: 2;
             animation: bounce 0.5s infinite alternate;
         }
-        /* ბომბის დიდი ზომა */
+        /* ბომბი */
         .bomb {
             position: absolute;
             width: 55px;
             height: 55px;
-            background-image: url('bomb.png?v=2');
+            background-image: url('bomb.png'), url('bomb.PNG'), url('bomb.jpg');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -168,8 +168,8 @@
 
         let containerWidth = 400;
         let containerHeight = 400;
-        const playerWidth = 50;
-        const playerHeight = 50;
+        const playerWidth = 55;
+        const playerHeight = 55;
 
         let playerX = 150;
         let playerY = 150;
@@ -252,7 +252,7 @@
 
             for (let i = items.length - 1; i >= 0; i--) {
                 let item = items[i];
-                let dist = Math.sqrt(Math.pow((item.x + 27.5) - (playerX + 25), 2) + Math.pow((item.y + 27.5) - (playerY + 25), 2));
+                let dist = Math.sqrt(Math.pow((item.x + 27.5) - (playerX + 27.5), 2) + Math.pow((item.y + 27.5) - (playerY + 27.5), 2));
                 if (dist < 45) {
                     item.element.remove();
                     items.splice(i, 1);
@@ -265,7 +265,7 @@
 
             for (let i = bombs.length - 1; i >= 0; i--) {
                 let bomb = bombs[i];
-                let dist = Math.sqrt(Math.pow((bomb.x + 27.5) - (playerX + 25), 2) + Math.pow((bomb.y + 27.5) - (playerY + 25), 2));
+                let dist = Math.sqrt(Math.pow((bomb.x + 27.5) - (playerX + 27.5), 2) + Math.pow((bomb.y + 27.5) - (playerY + 27.5), 2));
                 if (dist < 42) {
                     endGame();
                     return;
