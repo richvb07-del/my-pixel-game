@@ -52,35 +52,35 @@
             border-radius: 4px;
             overflow: hidden;
         }
-        /* კურდღელი ვარდისფერი კუბის ნაცვლად */
+        /* კურდღელი */
         #player {
             position: absolute;
-            width: 45px;
-            height: 45px;
-            background-image: url('bunny.png');
+            width: 50px;
+            height: 50px;
+            background-image: url('bunny.png?v=1');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
             z-index: 5;
         }
-        /* სტაფილო დიდი ზომით (55px) */
+        /* სტაფილო (დიდი ზომა - 55px) */
         .item {
             position: absolute;
             width: 55px;
             height: 55px;
-            background-image: url('carrot.png');
+            background-image: url('carrot.png?v=1');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
             z-index: 2;
             animation: bounce 0.5s infinite alternate;
         }
-        /* ბომბი დიდი ზომით (55px) */
+        /* ბომბი (დიდი ზომა - 55px) */
         .bomb {
             position: absolute;
             width: 55px;
             height: 55px;
-            background-image: url('bomb.png');
+            background-image: url('bomb.png?v=1');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -168,8 +168,8 @@
 
         let containerWidth = 400;
         let containerHeight = 400;
-        const playerWidth = 45;
-        const playerHeight = 45;
+        const playerWidth = 50;
+        const playerHeight = 50;
 
         let playerX = 150;
         let playerY = 150;
@@ -253,8 +253,8 @@
             // შეჯახება სტაფილოსთან
             for (let i = items.length - 1; i >= 0; i--) {
                 let item = items[i];
-                let dist = Math.sqrt(Math.pow((item.x + 27.5) - (playerX + 22.5), 2) + Math.pow((item.y + 27.5) - (playerY + 22.5), 2));
-                if (dist < 42) {
+                let dist = Math.sqrt(Math.pow((item.x + 27.5) - (playerX + 25), 2) + Math.pow((item.y + 27.5) - (playerY + 25), 2));
+                if (dist < 45) {
                     item.element.remove();
                     items.splice(i, 1);
                     score += 10;
@@ -267,82 +267,3 @@
             // შეჯახება ბომბთან
             for (let i = bombs.length - 1; i >= 0; i--) {
                 let bomb = bombs[i];
-                let dist = Math.sqrt(Math.pow((bomb.x + 27.5) - (playerX + 22.5), 2) + Math.pow((bomb.y + 27.5) - (playerY + 22.5), 2));
-                if (dist < 40) {
-                    endGame();
-                    return;
-                }
-            }
-
-            spawnItemTimer++;
-            if (spawnItemTimer > 300) {
-                if (items.length < 3) createItem();
-                spawnItemTimer = 0;
-            }
-
-            spawnBombTimer++;
-            if (spawnBombTimer > 450) {
-                if (bombs.length < 4) createBomb();
-                spawnBombTimer = 0;
-            }
-
-            requestAnimationFrame(update);
-        }
-
-        function updateLevel() {
-            let nextLevel = Math.floor(score / 100) + 1;
-            if (nextLevel > currentLevel) {
-                currentLevel = nextLevel;
-                speed = baseSpeed + (currentLevel - 1) * 1.2;
-                let spdText = "ნელი";
-                if (currentLevel > 2) spdText = "საშუალო";
-                if (currentLevel > 4) spdText = "სწრაფი";
-                speedElement.innerText = spdText;
-            }
-        }
-
-        function endGame() {
-            isGameOver = true;
-            gameOverScreen.style.display = 'flex';
-        }
-
-        function resetGame() {
-            score = 0;
-            currentLevel = 1;
-            speed = baseSpeed;
-            isGameOver = false;
-            scoreElement.innerText = score;
-            speedElement.innerText = "ნელი";
-            gameOverScreen.style.display = 'none';
-            
-            items.forEach(i => i.element.remove());
-            items = [];
-            bombs.forEach(b => b.element.remove());
-            bombs = [];
-
-            containerWidth = container.clientWidth;
-            containerHeight = container.clientHeight;
-            playerX = (containerWidth / 2) - (playerWidth / 2);
-            playerY = (containerHeight / 2) - (playerHeight / 2);
-            targetX = playerX;
-            targetY = playerY;
-
-            createItem();
-            createBomb();
-            requestAnimationFrame(update);
-        }
-
-        setTimeout(() => {
-            containerWidth = container.clientWidth;
-            containerHeight = container.clientHeight;
-            playerX = (containerWidth / 2) - (playerWidth / 2);
-            playerY = (containerHeight / 2) - (playerHeight / 2);
-            targetX = playerX;
-            targetY = playerY;
-            createItem();
-            createBomb();
-            requestAnimationFrame(update);
-        }, 100);
-    </script>
-</body>
-</html>
